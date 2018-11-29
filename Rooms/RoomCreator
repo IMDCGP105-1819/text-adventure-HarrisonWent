@@ -1,0 +1,93 @@
+import os
+clear = lambda: os.system('cls') #on Windows System
+
+def CreateRoom():
+
+    finished_rooms = False
+    while not finished_rooms:
+
+        print("ROOM NAME")
+
+        room_name = input("Please enter room name: ")
+        f = open(room_name, "w+")
+
+        room_description = input("Please enter a description for the room listing story and exits: ")
+        f.write(room_description)
+
+        finished_items = False
+
+        print("ROOM ITEMS")
+
+        while finished_items != "False":
+            new_item = input("Please enter an item for the room: ")
+            new_item_description = input("Please enter a description for the new item: ")
+            new_item_is_key = input("Is this item a key? True/False: ")
+
+            if new_item_is_key:
+                item_unlock_room = input("Please enter the room name this item unlocks: ")
+            else:
+                item_unlock_room = "null"
+
+            f.write(new_item)
+            f.write(new_item_description)
+            f.write(item_unlock_room)
+
+            finished_items = input("Enter another item to the room? True/False: ")
+
+        print("ROOM DOORS")
+
+        confirm = input("Does the room have a door to the NORTH? True/False: ")
+        if confirm == "True":
+            room_north = input("Please enter room NORTH name: ")
+        else:
+            room_north = "null"
+
+        confirm = input("Does the room have a door to the EAST? True/False: ")
+        if confirm == "True":
+            room_east = input("Please enter room EAST name: ")
+        else:
+            room_east = "null"
+
+        confirm = input("Does the room have a door to the SOUTH? True/False: ")
+        if confirm == "True":
+            room_south = input("Please enter room SOUTH name: ")
+        else:
+            room_south = "null"
+
+        confirm = input("Does the room have a door to the WEST? True/False: ")
+        if confirm == "True":
+            room_west = input("Please enter room WEST name: ")
+        else:
+            room_west = "null"
+
+        f.write(room_north)
+        f.write(room_east)
+        f.write(room_south)
+        f.write(room_west)
+
+        print("ROOM KEY REQUIREMENTS")
+
+        requires_key = input("Does this room require a key to access? True/False: ")
+        if requires_key == "True":
+            key_requirement = input("Name the key to unlock this room: ")
+        else:
+            key_requirement = "null"
+
+        f.write(requires_key)
+        f.write(key_requirement)
+
+        f.close()
+
+        finished_rooms = input("Create another room? True/False: ")
+        clear()
+
+        '''
+        # some_file.py
+        import sys
+        sys.path.insert(0, '/path/to/application/app/folder')
+
+        import file
+        '''
+
+CreateRoom()
+
