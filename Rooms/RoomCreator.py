@@ -4,6 +4,28 @@ import os
 def clear():
     os.system('cls')
 
+def menu():
+    choice = input("Set up rooms or set up defaults? Rooms/Defaults")
+
+    clear()
+    if choice == "Rooms":
+        create_room()
+    elif choice == "Defaults":
+        create_defaults()
+    else:
+        menu()
+
+
+def create_defaults():
+    f = open("Default", "w+")
+    start_room = input("Enter the name for the starting room:")
+    f.write(start_room)
+    end_script = input("Enter the dialogue for finishing the game")
+    f.write(end_script)
+    f.close()
+    clear()
+    menu()
+
 
 def create_room():
 
@@ -27,13 +49,13 @@ def create_room():
 
         finished_rooms = input("Create another room? True/False: ")
         clear()
+    menu()
 
 
 def set_up_room():
     print("ROOM NAME")
 
     room_name = input("Please enter room name: ")
-
     name_found = False
 
     while not name_found:
@@ -60,9 +82,12 @@ def verify_room_name(room_name):
 
 
 def set_up_items(f):
-    finished_items = False
+    item_count = int(input("Please enter how many items this room has, 0 for no items: "))
+    f.write(str(item_count)+"\n")
 
-    while finished_items != "False":
+    finished_items = 0
+
+    while finished_items != item_count:
         new_item = input("Please enter an item for the room: ")
         new_item_description = input("Please enter a description for the new item: ")
         new_item_is_key = input("Is this item a key? True/False: ")
@@ -76,7 +101,13 @@ def set_up_items(f):
         f.write(new_item_description+"\n")
         f.write(item_unlock_room+"\n")
 
-        finished_items = input("Enter another item to the room? True/False: ")
+        item_interact_list = input("Please enter phrases that interact with this item e.g.(Pick up,Take : ")
+        f.write(item_interact_list+"\n")
+
+        item_end_game = input("Does this item end the game? True/False")
+        f.write(item_end_game+"\n")
+
+        finished_items += 1
 
 
 def set_up_doors(f):
@@ -121,5 +152,5 @@ def set_up_keys(f):
     f.write(key_requirement+"\n")
 
 
-create_room()
+menu()
 
