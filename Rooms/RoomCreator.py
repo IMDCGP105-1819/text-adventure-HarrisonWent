@@ -19,7 +19,7 @@ def menu():
 def create_defaults():
     f = open("Default", "w+")
     start_room = input("Enter the name for the starting room:")
-    f.write(start_room)
+    f.write(start_room+"\n")
     end_script = input("Enter the dialogue for finishing the game")
     f.write(end_script)
     f.close()
