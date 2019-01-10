@@ -1,8 +1,12 @@
 import os
+from TextCorrector import TextCorrection
+Text_Correction = TextCorrection
 
+#Used to clear prompt
 def clear():
     os.system('cls')
 
+#Main gameplay loop
 def run_adventure():
 
     game_complete = False
@@ -14,6 +18,7 @@ def run_adventure():
 
     my_inventory_of_keys = []
 
+    #actions while the game is running, loops here when new room is opened
     while not game_complete:
 
         #open current room
@@ -36,7 +41,7 @@ def run_adventure():
             used_command = False
 
             #Search room
-            if user_input == "searchroom":
+            if user_input == "searchroom" or user_input == "look":
                 used_command = True
                 searched_Room = True
                 for val in room_items:
@@ -57,12 +62,12 @@ def run_adventure():
             #Interact with items
             for items in room_items:
                 if items["ItemName"] in user_input:
-                    for phrases in items["InteractPhrases"]:
-                        if phrases in user_input:
-                            used_command = True
-                            if not searched_Room:
-                                print("You haven't searched the room yet!")
-                            else:
+                    if not searched_Room:
+                        print("You haven't searched the room yet!")
+                    else:
+                        for phrases in items["InteractPhrases"]:
+                            if phrases in user_input:
+                                used_command = True
                                 print(items["ItemDescription"])
                                 if items["IsKeyFor"] != "null":
                                     print("you pick it up and put it in your backpack")
@@ -70,6 +75,9 @@ def run_adventure():
                                 if items["EndsGame"] == "true":
                                     moving_out_of_room = True
                                     game_complete = True
+                    if not used_command:
+                        print("I cant ", user_input.replace(items["ItemName"],""), items["ItemName"])
+                        used_command = True
 
             #Help options
             if(user_input.__contains__("help")):
@@ -77,7 +85,7 @@ def run_adventure():
                 print("AVAILABLE COMMANDS:")
                 print(": Check inventory")
                 if not searched_Room:
-                    print(": Search room")
+                    print(": Search room/look")
                 else:
                     print("ITEMS IN ROOM:")
                     for items in room_items:
@@ -113,7 +121,7 @@ def run_adventure():
         #prepare for next room
         clear()
 
-    #Finish game
+    #Finish game, gets lines from default file
     f = open_room("Default")
     f.readline()
     print(f.readline())
@@ -122,69 +130,49 @@ def run_adventure():
 
     exit()
 
+#Used to format string to directory
 def open_room(name):
     name = name.rstrip()
     f = open("Rooms/"+name, "r")
     return f
 
-
+#Gets cleaned input from user
 def get_input():
     user_input = input("What shall i do? (enter HELP for help)")
-    user_input = clean_string(user_input)
+    user_input = TextCorrection.clean_string(user_input)
     return user_input
 
-
-def filter_string(input_string):
-    input_string = input_string.lower()
-    input_string = input_string.replace('\n', '').replace('\r', '')
-    input_string = input_string.replace(' ', "")
-    return input_string
-
-def clean_string(input_string):
-    input_string = filter_string(input_string)
-
-    punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
-    temp = ""
-
-    for char in input_string:
-        if char not in punctuations:
-            temp = temp + char
-        input_string = temp
-    return input_string
-
-def create_list(input_string):
-    input_string = filter_string(input_string)
-    stripped_input = input_string
-    return stripped_input.split(",")
-
+#Collects items and their functions from current room
 def get_items(f, item_count):
     a=0
     items = []
     while a < item_count:
-        items.append({"ItemName" : clean_string(f.readline()),
+        items.append({"ItemName" : TextCorrection.clean_string(f.readline()),
                       "ItemDescription" : f.readline(),
-                      "IsKeyFor" : clean_string(f.readline()),
-                      "InteractPhrases" : create_list(f.readline()),
-                      "EndsGame" : clean_string(f.readline())})
+                      "IsKeyFor" : TextCorrection.clean_string(f.readline()),
+                      "InteractPhrases" : TextCorrection.create_list(f.readline()),
+                      "EndsGame" : TextCorrection.clean_string(f.readline())})
         a+=1
     return items
 
+#Collects doors in current room (North East South West, in that order)
 def get_doors(f):
     rooms = []
-    rooms.append({"Name" : clean_string(f.readline()), "Direction" : "north"})
-    rooms.append({"Name": clean_string(f.readline()), "Direction": "east"})
-    rooms.append({"Name": clean_string(f.readline()), "Direction": "south"})
-    rooms.append({"Name": clean_string(f.readline()), "Direction": "west"})
+    rooms.append({"Name" : TextCorrection.clean_string(f.readline()), "Direction" : "north"})
+    rooms.append({"Name": TextCorrection.clean_string(f.readline()), "Direction": "east"})
+    rooms.append({"Name": TextCorrection.clean_string(f.readline()), "Direction": "south"})
+    rooms.append({"Name": TextCorrection.clean_string(f.readline()), "Direction": "west"})
     return rooms
 
+#Checks destination room for a required key to open it
 def get_room_key_requirement(room_name, my_inventory):
     with open_room(room_name) as f:
         lines = f.read().splitlines()
-        requires_key = clean_string(lines[-2])
+        requires_key = TextCorrection.clean_string(lines[-2])
         if requires_key == "false":
             return True
         else:
-            key_name = clean_string(lines[-1])
+            key_name = TextCorrection.clean_string(lines[-1])
             for keys in my_inventory:
                 if keys["KeyName"] in key_name:
                     return True
