@@ -3,7 +3,7 @@ You are in the armory, a small room with what little remains of weapons
 EscapePodKey
 A key used to open up the escape pods
 EscapePodRoom
-Pick up, Take
+Pick up, Take, look, use
 False
 MedBay
 null
